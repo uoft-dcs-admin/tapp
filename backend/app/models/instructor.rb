@@ -2,6 +2,9 @@
 
 class Instructor < ApplicationRecord
     has_and_belongs_to_many :positions
+    has_many :instructor_positions,
+             class_name: 'InstructorPosition',
+             dependent: :destroy
 
     validates_presence_of :last_name, :first_name, :utorid
     validates_uniqueness_of :utorid

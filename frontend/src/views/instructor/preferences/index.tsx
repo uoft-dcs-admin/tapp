@@ -1,5 +1,5 @@
 import React from "react";
-import { Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import CommentIcon from "@mui/icons-material/Comment";
 
 import { ActionsList, ActionHeader } from "../../../components/action-buttons";
@@ -13,6 +13,7 @@ import {
 import { formatDate } from "../../../libs/utils";
 import { DisplayRating } from "../../../components/applicant-rating";
 import { ConnectedExportApplicationsAction } from "./import-export";
+import { SubscriptionButton } from "./subscription-button";
 
 export default function InstructorPreferencesView() {
     const activeSession = useSelector(activeSessionSelector);
@@ -40,9 +41,21 @@ export default function InstructorPreferencesView() {
                 <ConnectedExportApplicationsAction />
             </ActionsList>
             <ContentArea>
-                <Typography variant="h4" gutterBottom>
-                    <span>{formattedPositionName}</span>
-                </Typography>
+                <Box
+                    sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        flexWrap: "wrap",
+                        gap: 1,
+                        mb: 1,
+                    }}
+                >
+                    <Typography variant="h4">
+                        <span>{formattedPositionName}</span>
+                    </Typography>
+                    <SubscriptionButton />
+                </Box>
                 <Typography>
                     Below is a list of your TAs who have applied for{" "}
                     <Typography component="span" color="primary" display="inline" sx={{ fontWeight: "bold" }}>

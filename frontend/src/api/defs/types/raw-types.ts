@@ -225,6 +225,12 @@ export interface RawReportingTag {
     name: string;
 }
 
+export interface RawInstructorPosition extends HasId {
+    instructor_id: number;
+    position_id: number;
+    is_subscribed: boolean;
+}
+
 export interface RawInstructorPreference {
     application_id: number;
     position_id: number;

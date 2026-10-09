@@ -24,6 +24,7 @@ import type {
     RawInstructorPreference,
     RawApplicantMatchingDatum,
     RawMatch,
+    RawInstructorPosition,
 } from "./raw-types";
 
 export type Duty = RawDuty;
@@ -90,6 +91,12 @@ export interface PostingPosition
     extends Omit<RawPostingPosition, "position_id" | "posting_id"> {
     position: Position;
     posting: Posting;
+}
+
+export interface InstructorPosition
+    extends Omit<RawInstructorPosition, "instructor_id" | "position_id"> {
+    instructor: Instructor;
+    position: Position;
 }
 
 export interface InstructorPreference

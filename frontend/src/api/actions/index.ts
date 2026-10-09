@@ -10,6 +10,7 @@ export * from "./wage_chunks";
 export * from "./status";
 export * from "./offers";
 export * from "./users";
+export * from "./instructors_positions";
 export * from "./postings";
 export * from "./matches";
 export * from "./init";

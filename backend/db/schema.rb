@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2026_07_27_180313) do
+ActiveRecord::Schema.define(version: 2026_09_17_190130) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -195,6 +195,7 @@ ActiveRecord::Schema.define(version: 2026_07_27_180313) do
   create_table "instructors_positions", force: :cascade do |t|
     t.bigint "instructor_id"
     t.bigint "position_id"
+    t.boolean "is_subscribed", default: false, null: false
     t.index ["instructor_id"], name: "index_instructors_positions_on_instructor_id"
     t.index ["position_id"], name: "index_instructors_positions_on_position_id"
   end

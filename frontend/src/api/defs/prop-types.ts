@@ -184,6 +184,11 @@ function generatePropTypes(PropTypes: typeof OrigPropTypes) {
             position_id: id,
             posting_id: id,
         }),
+        instructor_position: PropTypes.shape({
+            instructor_id: id,
+            position_id: id,
+            is_subscribed: PropTypes.bool,
+        }),
         instructor_preference: PropTypes.shape({
             preference_level: PropTypes.number,
             comment: PropTypes.string,

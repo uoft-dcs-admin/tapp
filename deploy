@@ -1,6 +1,59 @@
 #!/bin/bash
-cp prod.env .env 
-docker compose -f docker-compose.yml -f docker-compose.prod.yml down --remove-orphans
-NODE_OPTIONS=--max-old-space-size=16384 docker-compose -f docker-compose.frontend.yml up --build --force-recreate
+set -euo pipefail
+
+cd "$(dirname "$0")"
+deployment_path="$PWD"
+docker_path="$(command -v docker)"
+flock_path="$(command -v flock)"
+
+# Abort if timezone is not America/Toronto as expected
+if [[ "$(timedatectl show --property=Timezone --value)" != "America/Toronto" ]]; then
+	echo 'Configure the deployment host timezone as America/Toronto before deploying.' >&2
+	exit 1
+fi
+
+cp prod.env .env
+compose=("$docker_path" compose -f docker-compose.yml -f docker-compose.prod.yml)
+
+# Build the frontend assets, then start the production backend and database
+"${compose[@]}" down --remove-orphans
+NODE_OPTIONS=--max-old-space-size=16384 docker compose -f docker-compose.frontend.yml up --build --force-recreate
 docker compose cp frontend:/app/build/. backend/public/
-docker compose -f docker-compose.yml -f docker-compose.prod.yml up --build --force-recreate -d
+"${compose[@]}" up --build --force-recreate -d
+
+# The files in cron_directory track the existing crontab, our updates, and any errors encountered
+# in the process of reading and updating it
+mkdir -p log
+cron_directory="$(mktemp -d)"
+trap 'rm -rf "$cron_directory"' EXIT
+
+# Generate host cron commands using 'whenever' Gem, using flock to prevent overlapping executions
+"${compose[@]}" exec -T backend bundle exec whenever \
+	--set "deployment_path=$deployment_path&docker_path=$docker_path&flock_path=$flock_path" \
+	> "$cron_directory/schedule"
+
+# Read in and preserve the existing crontab if any exists
+if ! crontab -l > "$cron_directory/current" 2> "$cron_directory/error"; then
+	if ! grep -qi 'no crontab for' "$cron_directory/error"; then
+		cat "$cron_directory/error" >&2
+		exit 1
+	fi
+fi
+
+# Replace only our offer summary job(s) block, preserving any unrelated crontab entries
+awk -v schedule_file="$cron_directory/schedule" '
+	$0 == "# BEGIN TAPP OFFER SUMMARIES" { managed = 1; next }
+	$0 == "# END TAPP OFFER SUMMARIES" { managed = 0; next }
+	!managed { print }
+	END {
+		print "# BEGIN TAPP OFFER SUMMARIES"
+		while ((getline line < schedule_file) > 0) print line
+		close(schedule_file)
+		print "# END TAPP OFFER SUMMARIES"
+	}
+' "$cron_directory/current" > "$cron_directory/updated"
+
+# Leave the installed crontab alone when the generated schedule has not changed
+if ! cmp -s "$cron_directory/current" "$cron_directory/updated"; then
+	crontab "$cron_directory/updated"
+fi
