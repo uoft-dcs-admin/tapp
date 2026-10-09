@@ -3,8 +3,37 @@
 class OfferService
     attr_reader :offer
 
-    def initialize(offer:)
+    def initialize(offer: nil, position: nil)
         @offer = offer
+        @position = position
+    end
+
+    # return a summary of offer activity for the position within the specified time period,
+    # specifically the names of applicants that received a new offer, had their offer withdrawn,
+    # or either accepted or rejected their offer
+    def activity_summary(
+        lookback: 24.hours,
+        since_time: nil,
+        to_time: Time.zone.now
+    )
+        since_time ||= to_time - lookback
+        offers =
+            Offer.joins(:assignment)
+                .where(assignments: { position_id: @position.id })
+                .includes(assignment: :applicant)
+                .order(:id)
+        activity_range = since_time..to_time
+
+        {
+            new_offers:
+                applicant_names(offers.where(created_at: activity_range)),
+            accepted_offers:
+                applicant_names(offers.where(accepted_date: activity_range)),
+            rejected_offers:
+                applicant_names(offers.where(rejected_date: activity_range)),
+            withdrawn_offers:
+                applicant_names(offers.where(withdrawn_date: activity_range))
+        }
     end
 
     # generate subsitutions needed for the email templates
@@ -67,6 +96,13 @@ class OfferService
     end
 
     private
+
+    def applicant_names(offers)
+        offers.each_with_object([]) do |offer, names|
+            applicant = offer.assignment.applicant
+            names << "#{applicant.first_name} #{applicant.last_name}".strip
+        end
+    end
 
     def status_message
         case @offer.status.to_sym

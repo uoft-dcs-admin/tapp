@@ -39,6 +39,10 @@ import {
     fetchLetterTemplates,
     fetchLetterTemplatesSuccess,
 } from "./letter_templates";
+import {
+    fetchInstructorsPositions,
+    fetchInstructorsPositionsSuccess,
+} from "./instructors_positions";
 
 type InitStages =
     | "pageLoad"
@@ -272,6 +276,9 @@ export function initFromStage(
                     wrapThunk(fetchMatches),
                 ];
             }
+            if (activeRole === "instructor") {
+                fetchActions.push(wrapThunk(fetchInstructorsPositions));
+            }
             if (activeRole === "admin") {
                 fetchActions.push(wrapThunk(fetchApplicantMatchingData));
                 fetchActions.push(wrapThunk(fetchLetterTemplates));
@@ -304,6 +311,7 @@ export function clearSessionDependentData(): ThunkAction<
     return async (dispatch) => {
         await Promise.all([
             dispatch(fetchInstructorPreferencesSuccess([])),
+            dispatch(fetchInstructorsPositionsSuccess([])),
             dispatch(fetchApplicantsSuccess([])),
             dispatch(fetchAssignmentsSuccess([])),
             dispatch(fetchContractTemplatesSuccess([])),

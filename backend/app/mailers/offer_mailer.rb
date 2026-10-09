@@ -3,6 +3,55 @@
 class OfferMailer < ActionMailer::Base
     require 'html_to_plain_text'
 
+    def email_summary(
+        instructor_position,
+        lookback: 24.hours,
+        since_time: nil,
+        to_time: Time.zone.now
+    )
+        instructor = instructor_position.instructor
+        position = instructor_position.position
+
+        unless Rails.application.config.enable_emailing
+            logger.warn "ENABLE_EMAILING is not true; skipping email to \"#{instructor.email}\""
+            return
+        end
+
+        # Build summary of offer activity within the lookback period, abort early if there was none
+        activity_summary =
+            OfferService.new(position: position).activity_summary(
+                lookback: lookback,
+                since_time: since_time,
+                to_time: to_time
+            )
+        return if activity_summary.values.all?(&:empty?)
+
+        @subs = activity_summary.merge(
+                instructor_name:
+                    "#{instructor.first_name} #{instructor.last_name}".strip,
+                position_code: position.position_code,
+                position_title: position.position_title,
+                session_name: position.session.name,
+                desired_num_assignments: position.desired_num_assignments,
+                accepted_num_assignments:
+                    position.assignments.joins(:active_offer)
+                            .merge(Offer.accepted).count
+            )
+
+        mail(
+            to: instructor.email,
+            from: Rails.application.config.ta_coordinator_email,
+            subject:
+                "TA Offer Activity Summary for #{position.position_code}"
+        ) do |format|
+            html = summary_email_html
+            format.html { render inline: html }
+            format.text do
+                render plain: HtmlToPlainText.plain_text(html)
+            end
+        end
+    end
+
     def email_contract(offer)
         populate_vars offer
 
@@ -118,6 +167,11 @@ class OfferMailer < ActionMailer::Base
 
     def reject_notification_email_html
         template = liquid_template('email_reject_notification.html')
+        template.render(@subs.stringify_keys)
+    end
+
+    def summary_email_html
+        template = liquid_template('email_summary.html')
         template.render(@subs.stringify_keys)
     end
 

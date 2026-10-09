@@ -13,6 +13,7 @@ import {
     sessionsReducer,
     matchesReducer,
     applicantMatchingDataReducer,
+    instructorsPositionsReducer,
 } from "../reducers";
 
 /**
@@ -45,6 +46,9 @@ export const rawSelector = {
     ddahs: makeModelDataSelector(ddahsReducer._localStoreSelector),
     instructorPreferences: makeModelDataSelector(
         instructorPreferencesReducer._localStoreSelector
+    ),
+    instructorsPositions: makeModelDataSelector(
+        instructorsPositionsReducer._localStoreSelector
     ),
     instructors: makeModelDataSelector(instructorsReducer._localStoreSelector),
     letterTemplates: makeModelDataSelector(

@@ -163,10 +163,6 @@ function DutyItem({
                     alignItems: "center",
                     gap: 2,
                     py: 1,
-                    opacity: isFixed ? 0.65 : 1,
-                    backgroundColor: isFixed ? "action.disabledBackground" : "transparent",
-                    borderRadius: 1,
-                    px: isFixed ? 1 : 0,
                 }}
             >
                 {category !== "note" && (

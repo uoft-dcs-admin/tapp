@@ -124,7 +124,17 @@ async function apiPOST(path: string, body: any = {}, omitPrefix = false) {
     return await _processFetchResponse(resp, path);
 }
 
-export { API_URL, ApiError, ApiFetchError, apiGET, apiPOST };
+async function apiPATCH(path: string, body: any = {}, omitPrefix = false) {
+    path = _ensurePath(path);
+    const resp = await fetch((omitPrefix ? "" : API_URL) + path, {
+        ...FETCH_INIT,
+        method: "PATCH",
+        body: JSON.stringify(body),
+    });
+    return await _processFetchResponse(resp, path);
+}
+
+export { API_URL, ApiError, ApiFetchError, apiGET, apiPOST, apiPATCH };
 
 // XXX TODO: this is the start of a type system for typing API
 // requests. However, it appears not to be usable in TypeScript 4.2 with template literals,

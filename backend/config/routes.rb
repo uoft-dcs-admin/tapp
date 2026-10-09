@@ -271,6 +271,7 @@ Rails
                             resources :contract_templates, only: %i[index]
                             resources :positions, only: %i[index]
                             resources :ddahs, only: %i[index]
+                            resources :instructors_positions, only: %i[index]
                             resources :instructor_preferences, only: %i[index]
                             resources :matches, only: %i[index]
                         end
@@ -284,6 +285,9 @@ Rails
 
                         # Instructors
                         resources :instructors, only: %i[index create]
+
+                        # InstructorsPositions
+                        resources :instructors_positions, only: %i[update]
 
                         # InstructorPreferences
                         resources :instructor_preferences, only: %i[create]

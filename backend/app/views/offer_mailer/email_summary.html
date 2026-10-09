@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	</head>
+	<body>
+		<p>Dear {{ instructor_name }},</p>
+		<p>
+			Here is your daily TA offer activity summary for
+			<strong>{{ position_code }}</strong>
+			{% if position_title %}({{ position_title }}){% endif %}
+			in {{ session_name }}.
+			{% if desired_num_assignments != nil %} 
+			You currently have {{ accepted_num_assignments }} assignments with accepted offers
+            of the target {{ desired_num_assignments }} assignments.
+			{% else %}
+			You currently have {{ accepted_num_assignments }} assignments with accepted offers.
+			{% endif %}
+		</p>
+
+		<h2 style="color: #6fc7ea">New Offers</h2>
+		{% if new_offers == empty %}
+		<p>None.</p>
+		{% else %}
+		<ul>
+			{% for applicant_name in new_offers %}
+			<li>{{ applicant_name }}</li>
+			{% endfor %}
+		</ul>
+		{% endif %}
+
+		<h2 style="color: #00a189">Offers Accepted</h2>
+		{% if accepted_offers == empty %}
+		<p>None.</p>
+		{% else %}
+		<ul>
+			{% for applicant_name in accepted_offers %}
+			<li>{{ applicant_name }}</li>
+			{% endfor %}
+		</ul>
+		{% endif %}
+
+		<h2 style="color: #dc4633">Offers Rejected</h2>
+		{% if rejected_offers == empty %}
+		<p>None.</p>
+		{% else %}
+		<ul>
+			{% for applicant_name in rejected_offers %}
+			<li>{{ applicant_name }}</li>
+			{% endfor %}
+		</ul>
+		{% endif %}
+
+		<h2 style="color: #ab1368">Offers Withdrawn</h2>
+		{% if withdrawn_offers == empty %}
+		<p>None.</p>
+		{% else %}
+		<ul>
+			{% for applicant_name in withdrawn_offers %}
+			<li>{{ applicant_name }}</li>
+			{% endfor %}
+		</ul>
+		{% endif %}
+	</body>
+</html>

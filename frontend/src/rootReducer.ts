@@ -18,6 +18,7 @@ import {
     postingPositionsReducer,
     matchesReducer,
     applicantMatchingDataReducer,
+    instructorsPositionsReducer,
 } from "./api/reducers";
 import { usersReducer } from "./api/reducers/users";
 import { ddahsTableReducer } from "./views/admin/ddah-table/reducers";
@@ -53,6 +54,7 @@ const reducer = combineReducers({
         users: usersReducer,
         ddahs: ddahsReducer,
         instructorPreferences: instructorPreferencesReducer,
+        instructorsPositions: instructorsPositionsReducer,
         matches: matchesReducer,
         applicantMatchingData: applicantMatchingDataReducer,
     }),

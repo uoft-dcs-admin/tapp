@@ -7,6 +7,9 @@ class Position < ApplicationRecord
     has_many :position_preferences, dependent: :destroy
     has_many :applications, through: :position_preferences
     has_many :matches, dependent: :destroy
+    has_many :instructor_positions,
+             class_name: 'InstructorPosition',
+             dependent: :destroy
 
     belongs_to :session
     belongs_to :contract_template
