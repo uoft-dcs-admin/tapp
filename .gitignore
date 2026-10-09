@@ -8,3 +8,4 @@ backend/public
 pg_data/*
 backend_storage
 !backend/app/controllers/public
+log/*
