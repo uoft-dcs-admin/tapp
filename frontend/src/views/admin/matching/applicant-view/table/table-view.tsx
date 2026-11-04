@@ -11,7 +11,26 @@ import { matchingStatusToString } from "../";
 import { AdvancedColumnDef, AdvancedFilterTable } from "../../../../../components/advanced-filter-table";
 import { departmentCodes, programCodes } from "../../name-maps";
 
-const DEFAULT_COLUMNS: AdvancedColumnDef<ApplicantSummary>[] = [
+type ApplicantTableRow = {
+    status: string;
+    last_name: string | null;
+    first_name: string;
+    utorid: string;
+    department: string;
+    program: string;
+    yip: string | number;
+    gpa: string | number;
+    taPreference: number | null;
+    instructorPreference: number | null;
+    assignments: string;
+    totalHoursAssigned: number;
+    tentativeAssignments: string;
+    totalHoursTentative: number;
+    previousHoursFulfilled: ApplicantSummary["applicantMatchingDatum"]["prev_hours_fulfilled"];
+    guaranteedHours: string;
+};
+
+const DEFAULT_COLUMNS: AdvancedColumnDef<ApplicantTableRow>[] = [
     {   
         header: "Status",
         accessorKey: "status"

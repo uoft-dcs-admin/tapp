@@ -13,9 +13,9 @@ import { matchesSelector, assignmentsSelector } from "../../../api/actions";
 import { useThunkDispatch } from "../../../libs/thunk-dispatch";
 import { AdvancedColumnDef, AdvancedFilterTable } from "../../../components/advanced-filter-table";
 import { upsertAssignment } from "../../../api/actions";
-import { Assignment } from "../../../api/defs/types";
+import { Match } from "../../../api/defs/types";
 
-const DEFAULT_COLUMNS: AdvancedColumnDef<Assignment>[] = [
+const DEFAULT_COLUMNS: AdvancedColumnDef<Match>[] = [
     { header: "Position Code", accessorKey: "position.position_code" },
     { header: "Hours", accessorKey: "hours_assigned" },
     { header: "Last Name", accessorKey: "applicant.last_name" },

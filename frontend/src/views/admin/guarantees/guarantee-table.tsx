@@ -67,7 +67,7 @@ export function ConnectedGuaranteeTable({
     editable = true,
     ...rest
 }: { editable?: boolean } & Partial<
-    PropsForElement<typeof AdvancedFilterTable>
+    PropsForElement<typeof AdvancedFilterTable<ApplicantMatchingDatum>>
 >) {
     const dispatch = useThunkDispatch();
     const selected = useSelector(
@@ -85,17 +85,7 @@ export function ConnectedGuaranteeTable({
         },
         [dispatch, selected]
     );
-    const applicantMatchingData = useSelector(applicantMatchingDataSelector);
-    const data = React.useMemo(
-        () =>
-            applicantMatchingData.map((applicantMatchingDatum) => {
-                const { active_confirmation_status, ...rest } = applicantMatchingDatum;
-                return !active_confirmation_status
-                    ? { active_confirmation_status: "No Letter Sent", ...rest }
-                    : applicantMatchingDatum;
-            }),
-        [applicantMatchingData]
-    );
+    const data = useSelector(applicantMatchingDataSelector);
     const allTemplates = useSelector(letterTemplatesSelector);
 
     // Row editing is blocked for assignments that have an active offer
@@ -209,9 +199,7 @@ export function ConnectedGuaranteeTable({
                 // when sorted, so we set their accessor to null (the accessor is used by react table
                 // when sorting items).
                 accessorFn: (dat: typeof data[number]) =>
-                    dat.active_confirmation_status === "No Letter Sent"
-                        ? null
-                        : dat.active_confirmation_status,
+                    dat.active_confirmation_status || null,
                 Cell: ({ cell, row }) => (
                     <StatusCell
                         value={cell.getValue() as ApplicantMatchingDatum["active_confirmation_status"]}
