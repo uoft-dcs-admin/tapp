@@ -41,7 +41,7 @@ export type AdvancedColumnDef<T extends MRT_RowData> = MRT_ColumnDef<T> & {
  * blocked for any specific row for whatever reason as defined by the isRowSelectable, deleteBlocked
  * and editBlocked props respectively, optionally providing the user with help text in this case.
  */
-export function AdvancedFilterTable({
+export function AdvancedFilterTable<T extends MRT_RowData>({
     columns,
     data,
     filterable = false,
@@ -56,19 +56,19 @@ export function AdvancedFilterTable({
     onEditRow,
     editBlocked,
 }: {
-    columns: AdvancedColumnDef<any>[];
-    data: any[];
+    columns: AdvancedColumnDef<T>[];
+    data: T[];
     filterable?: boolean;
     selectable?: boolean;
     selected?: number[];
     setSelected?: (selected: number[]) => void;
-    isRowSelectable?: (row: any) => boolean;
+    isRowSelectable?: (row: T) => boolean;
     deleteable?: boolean;
-    onDelete?: (row: any) => void;
-    deleteBlocked?: (row: any) => string | false;
+    onDelete?: (row: T) => void;
+    deleteBlocked?: (row: T) => string | false;
     editable?: boolean;
-    onEditRow?: (row: any, values: any) => void;
-    editBlocked?: (row: any) => string | false;
+    onEditRow?: (row: T, values: any) => void;
+    editBlocked?: (row: T) => string | false;
 }) {
     const [density, setDensity] = React.useState<"comfortable" | "compact" | "spacious">("compact");
     const [rowSelection, setRowSelection] = React.useState<Record<string, boolean>>({});
@@ -146,8 +146,8 @@ export function AdvancedFilterTable({
                 ? ""
                 : String(value).toLowerCase();
 
-        const customFilterFn: MRT_FilterFn<any> = (
-            row: any,
+        const customFilterFn: MRT_FilterFn<T> = (
+            row,
             columnId: string,
             filterValue: unknown
         ) => {
@@ -208,7 +208,7 @@ export function AdvancedFilterTable({
 
     return (
         <Box>
-            <MaterialReactTable
+            <MaterialReactTable<T>
                 columns={enhancedColumns}
                 data={data}
                 enableEditing={editable}

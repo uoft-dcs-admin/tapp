@@ -272,7 +272,7 @@ export function ConnectedOfferTable({
     inDeleteMode?: boolean;
     editable?: boolean;
 } & Partial<
-    PropsForElement<typeof AdvancedFilterTable>
+    PropsForElement<typeof AdvancedFilterTable<Assignment>>
 >) {
     const dispatch = useThunkDispatch();
     const selected = useSelector(offerTableSelector).selectedAssignmentIds;
@@ -288,16 +288,7 @@ export function ConnectedOfferTable({
         },
         [dispatch, selected]
     );
-    const assignments = useSelector(assignmentsSelector);
-    const data = React.useMemo(
-        () =>
-            assignments.map((assignment) =>
-                assignment.active_offer_status
-                    ? assignment
-                    : { ...assignment, active_offer_status: "No Contract" }
-            ),
-        [assignments]
-    );
+    const data = useSelector(assignmentsSelector);
     const [assignmentToDelete, setAssignmentToDelete] = React.useState<Assignment | null>(null);
 
     // Row editing and deletion is blocked for assignments that have an active offer
@@ -485,9 +476,7 @@ export function ConnectedOfferTable({
                 // when sorted, so we set their accessor to null (the accessor is used by react table
                 // when sorting items).
                 accessorFn: (dat: typeof data[number]) =>
-                    dat.active_offer_status === "No Contract"
-                        ? null
-                        : dat.active_offer_status,
+                    dat.active_offer_status || null,
                 Cell: ({ cell, row }) => (
                     <StatusCell
                         value={cell.getValue() as Assignment["active_offer_status"]}
